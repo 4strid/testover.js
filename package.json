@@ -1,0 +1,15 @@
+{
+    "name": "testOver"
+  , "description": "run useful tests on your arrays of arrays or objects"
+  ,	"version": "0.1.0"
+  , "author": "Peter Fesz-Nguyen"
+  ,	"homepage": "https://github.com/ctrl-alt-meh/testover.js"
+  ,	"keywords": ["testing","arrays","consistency","checking","objects","existence"]
+  , "repository": {
+  		  "type": "git"
+  	  ,	"url": "http://github.com/ctrl-alt-meh/testover.git"
+  	}
+  ,	"main": "testover"
+  , "license": "MIT"
+  , "devDependenices"
+}
