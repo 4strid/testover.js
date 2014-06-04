@@ -37,3 +37,4 @@ test.consistent('age').over(triplets);
 - assigned
 
 ## License
+MIT
