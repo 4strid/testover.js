@@ -11,5 +11,7 @@
   	}
   ,	"main": "testover"
   , "license": "MIT"
-  , "devDependenices"
+  , "devDependenices": {
+      "colors": "0.6.2"
+    }
 }
