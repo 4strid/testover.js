@@ -1,5 +1,5 @@
 /*TestOver 
-run useful tests on your arrays of objects*/
+run useful tests on your arrays or hashes*/
 
 (function () {
 
@@ -20,52 +20,69 @@ run useful tests on your arrays of objects*/
 			return target[prop];
 	}
 
-	function Iterator (prop, reduce, _variable) {
+	function Reducer (prop, reduce, _init) {
 		var iterator = function (rows) {
-			arrayWarn(rows);
-			var variable = _variable || get(rows[0], prop);
-			for (var i = 0; i < rows.length; i++) {
-				variable = reduce(prop, variable, rows[i]);
+			check(rows);
+			var reduced = _init || get(rows[0], prop);
+			if (Array.isArray(rows)) {
+				for (var i = 0; i < rows.length; i++) {
+					reduced = reduce(prop, reduced, rows[i]);
+				}
+			} else {
+				for (var key in rows) {
+					reduced = reduce(prop, reduced, rows[key]);					
+				}
 			}
-			return variable;
+
+			return reduced;
 		};
 		iterator.over = iterator;
 		return iterator;
 	}
 
-	function Iterator_with_constant (prop, reduce, init, _constant) {
+	function Reducer_with_constant (prop, reduce, init, _constant) {
 		var iterator = function (rows) {
-			arrayWarn(rows);
+			check(rows);
 			var constant = _constant || get(rows[0], prop);
-			var ret = init;
-			for (var i = 0; i < rows.length; i++) {
-				ret = reduce(prop, constant, rows[i], ret);
+			var reduced = init;
+			if (Array.isArray(rows)) {
+				for (var i = 0; i < rows.length; i++) {
+					reduced = reduce(prop, reduced, rows[i]);
+				}
+			} else {
+				for (var key in rows) {
+					reduced = reduce(prop, reduced, rows[key]);					
+				}
 			}
-			return ret;
+			return reduced;
 		};
 		iterator.over = iterator;
 		return iterator;
 	}
 
-	function arrayWarn(maybe) {
-		if (!Array.isArray(maybe))
-			throw new Error('Must iterate over an array');
-			//....... for now!
+	function check(list) {
+		if (!(Array.isArray(list) || typeof list === 'object'))
+			throw new Error('Must iterate over an array or hash');
+		// maybe run a schema check here too eventually
 	}
 
 	Tests = {
-		max: function (prop) {
-			return Iterator(prop, function (prop, max, row) {
+		// add functions of form f(prop, row, reduced, opts)
+		add: function(field, reduction) {
+			this[field] = 'this will be a function'
+		}
+	 ,	max: function (prop) {
+			return Reducer(prop, function (prop, max, row) {
 				return Math.max(max, get(row, prop));
 			});
 		}
 	  , min: function (prop) {
-	  		return Iterator(prop, function (prop, min, row) {
+	  		return Reducer(prop, function (prop, min, row) {
 	  			return Math.min(min, get(row, prop))
 	  		});
 	  	}
 	  , consistent: function (prop) {
-  			return Iterator_with_constant(prop, function (prop, constant, row, ret) {
+  			return Reducer_with_constant(prop, function (prop, constant, row, ret) {
   				if (constant !== get(row, prop))
   					return false;
   				else
@@ -73,7 +90,7 @@ run useful tests on your arrays of objects*/
   			}, true);
 	  	}
 	  , equals: function (prop, value) {
-	  		return Iterator_with_constant(prop, function (prop, val, row, ret) {
+	  		return Reducer_with_constant(prop, function (prop, val, row, ret) {
 	  			if (val !== get(row, prop))
 	  				return false;
 	  			else
@@ -81,7 +98,7 @@ run useful tests on your arrays of objects*/
 	  		}, true, value);
 	  	}
 	  ,	exists: function (prop) {
-	  		return Iterator(prop, function (prop, ret, row) {
+	  		return Reducer(prop, function (prop, ret, row) {
 	  			if (typeof get(row, prop) === 'undefined')
 	  				return false;
 	  			else
@@ -89,7 +106,7 @@ run useful tests on your arrays of objects*/
 	  		}, true);
 	  	}
 	  ,	assigned: function (prop) {
-	  		return Iterator(prop, function (prop, ret, row) {
+	  		return Reducer(prop, function (prop, ret, row) {
 	  			if (typeof get(row, prop) === 'undefined' || get(row, prop) === null)
 	  				return false;
 	  			else
@@ -107,6 +124,9 @@ run useful tests on your arrays of objects*/
 	  		}
 	  	}
 	}
+/*	Tests.prototype.add = function (name, reduction) {
+		this[name] = reduction;
+	}*/
 
 	// (for equivalent use server-side or client-side)
 	if (typeof exports !== 'undefined') {
@@ -115,6 +135,6 @@ run useful tests on your arrays of objects*/
 		}
 		// exports.Testeth = Tests; // ???
 	} else {
-		root['Testeth'] = Tests;
+		root['Testover'] = Tests;
 	}
 }).call(this);
