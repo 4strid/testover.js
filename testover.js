@@ -20,44 +20,37 @@ run useful tests on your arrays or hashes*/
 			return target[prop];
 	}
 
-	function Reducer (prop, reduce, _init) {
-		var iterator = function (rows) {
+	// pass an initial value or an options object your reduction function will have access to
+	// you can also pass the inital value as opts.init
+	// i set opts.first to the first item's 'prop'
+
+	function Reducer (prop, reduction, _opts) {
+		var reducer = function (rows) {
 			check(rows);
-			var reduced = _init || get(rows[0], prop);
-			if (Array.isArray(rows)) {
-				for (var i = 0; i < rows.length; i++) {
-					reduced = reduce(prop, reduced, rows[i]);
-				}
-			} else {
-				for (var key in rows) {
-					reduced = reduce(prop, reduced, rows[key]);					
-				}
+			var first = get(rows[0], prop);
+			console.log('first is ' + first);
+			if (typeof _opts === 'undefined') {
+				opts = {first: first, init: first};
+			} else if (typeof _opts !== 'object') {
+				opts = {first: first, init: _opts};
+			} else if (typeof _opts.init === 'undefined' ) {
+				opts = _opts;
+				opts.first = first;
 			}
-
-			return reduced;
-		};
-		iterator.over = iterator;
-		return iterator;
-	}
-
-	function Reducer_with_constant (prop, reduce, init, _constant) {
-		var iterator = function (rows) {
-			check(rows);
-			var constant = _constant || get(rows[0], prop);
-			var reduced = init;
+			var reduced = opts.init;
 			if (Array.isArray(rows)) {
 				for (var i = 0; i < rows.length; i++) {
-					reduced = reduce(prop, reduced, rows[i]);
+					reduced = reduction(prop, rows[i], reduced, opts);
 				}
 			} else {
 				for (var key in rows) {
-					reduced = reduce(prop, reduced, rows[key]);					
+					reduced = reduction(prop, rows[key], reduced, opts);					
 				}
 			}
 			return reduced;
 		};
-		iterator.over = iterator;
-		return iterator;
+		reducer.over = reducer;
+		return reducer;
 	}
 
 	function check(list) {
@@ -67,50 +60,52 @@ run useful tests on your arrays or hashes*/
 	}
 
 	Tests = {
-		// add functions of form f(prop, row, reduced, opts)
-		add: function(field, reduction) {
-			this[field] = 'this will be a function'
+		// reductions take the form r(prop, row, reduced, opts)
+		add: function(field, reduction, opts) {
+			this[field] = function (prop) {
+				return Reducer(prop, reduction, opts);
+			}
 		}
 	 ,	max: function (prop) {
-			return Reducer(prop, function (prop, max, row) {
+			return Reducer(prop, function (prop, row, max) {
 				return Math.max(max, get(row, prop));
 			});
 		}
 	  , min: function (prop) {
-	  		return Reducer(prop, function (prop, min, row) {
+	  		return Reducer(prop, function (prop, row, min) {
 	  			return Math.min(min, get(row, prop))
 	  		});
 	  	}
 	  , consistent: function (prop) {
-  			return Reducer_with_constant(prop, function (prop, constant, row, ret) {
-  				if (constant !== get(row, prop))
+  			return Reducer(prop, function (prop, row, consistent, opts) {
+  				if (opts.first !== get(row, prop))
   					return false;
   				else
-  					return ret;
+  					return consistent;
   			}, true);
 	  	}
-	  , equals: function (prop, value) {
-	  		return Reducer_with_constant(prop, function (prop, val, row, ret) {
-	  			if (val !== get(row, prop))
+	  , equals: function (prop, expect) {
+	  		return Reducer(prop, function (prop, row, equal, opts) {
+	  			if (opts.expect !== get(row, prop))
 	  				return false;
 	  			else
-	  				return ret;
-	  		}, true, value);
+	  				return equal;
+	  		}, {init: true, expect: expect});
 	  	}
 	  ,	exists: function (prop) {
-	  		return Reducer(prop, function (prop, ret, row) {
+	  		return Reducer(prop, function (prop, row, exists) {
 	  			if (typeof get(row, prop) === 'undefined')
 	  				return false;
 	  			else
-	  				return ret;
+	  				return exists;
 	  		}, true);
 	  	}
 	  ,	assigned: function (prop) {
-	  		return Reducer(prop, function (prop, ret, row) {
+	  		return Reducer(prop, function (prop, row, assigned) {
 	  			if (typeof get(row, prop) === 'undefined' || get(row, prop) === null)
 	  				return false;
 	  			else
-	  				return ret;
+	  				return assigned;
 	  		}, true);
 	  	}
 	  , Schema: function (schema) {
@@ -124,9 +119,6 @@ run useful tests on your arrays or hashes*/
 	  		}
 	  	}
 	}
-/*	Tests.prototype.add = function (name, reduction) {
-		this[name] = reduction;
-	}*/
 
 	// (for equivalent use server-side or client-side)
 	if (typeof exports !== 'undefined') {

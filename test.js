@@ -77,7 +77,3 @@ test(false, 'consistent', 'age', 'array_of_people');
 console.log('testing Equals(20) over array_of_triplets')
 assert(true, Tests.equals('age', 20).over(Args.array_of_triplets));
 test(true, 'consistent', 'sex', 'array_of_girls');
-
-Tests.set('foo','bar');
-console.log(Tests.name);
-console.log(Tests['foo']);
