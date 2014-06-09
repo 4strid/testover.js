@@ -1,10 +1,10 @@
 {
     "name": "test-over"
-  , "description": "run useful tests on your arrays of arrays or objects"
-  ,	"version": "0.1.0"
+  , "description": "run useful tests on your arrays or hashes of arrays or hashes"
+  ,	"version": "0.2.0"
   , "author": "Peter Fesz-Nguyen"
   ,	"homepage": "https://github.com/ctrl-alt-meh/testover.js"
-  ,	"keywords": ["testing","arrays","consistency","checking","objects","existence"]
+  ,	"keywords": ["properties","arrays","hashes","consistency","checking","objects","existence","reduce"]
   , "repository": {
   		  "type": "git"
   	  ,	"url": "http://github.com/ctrl-alt-meh/testover.js.git"
