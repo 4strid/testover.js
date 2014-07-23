@@ -1,4 +1,4 @@
-/*TestOver 
+/*test-over 0.2.0
 run useful tests on your arrays or hashes*/
 
 (function () {
@@ -26,9 +26,13 @@ run useful tests on your arrays or hashes*/
 
 	function Reducer (prop, reduction, _opts) {
 		var reducer = function (rows) {
-			check(rows);
-			var first = get(rows[0], prop);
-			console.log('first is ' + first);
+			var numeric_index = check(rows);
+			if (numeric_index)
+				var first = get(rows[0], prop);
+			else {
+				for (var key in rows) break;
+				var first = get(rows[key], prop);
+			}
 			if (typeof _opts === 'undefined') {
 				opts = {first: first, init: first};
 			} else if (typeof _opts !== 'object') {
@@ -36,15 +40,21 @@ run useful tests on your arrays or hashes*/
 			} else if (typeof _opts.init === 'undefined' ) {
 				opts = _opts;
 				opts.first = first;
+				opts.init = first;
+			} else {
+				opts = _opts;
+				opts.first = first;
 			}
 			var reduced = opts.init;
-			if (Array.isArray(rows)) {
+			if (numeric_index) {
 				for (var i = 0; i < rows.length; i++) {
 					reduced = reduction(prop, rows[i], reduced, opts);
 				}
 			} else {
 				for (var key in rows) {
-					reduced = reduction(prop, rows[key], reduced, opts);					
+					if (rows.hasOwnProperty(key)) {
+						reduced = reduction(prop, rows[key], reduced, opts);
+					}
 				}
 			}
 			return reduced;
@@ -56,7 +66,7 @@ run useful tests on your arrays or hashes*/
 	function check(list) {
 		if (!(Array.isArray(list) || typeof list === 'object'))
 			throw new Error('Must iterate over an array or hash');
-		// maybe run a schema check here too eventually
+		return (Array.isArray(list));
 	}
 
 	Tests = {
@@ -108,7 +118,18 @@ run useful tests on your arrays or hashes*/
 	  				return assigned;
 	  		}, true);
 	  	}
-	  , Schema: function (schema) {
+	  , unique: function (prop) {
+	  		return Reducer(prop, function (prop, row, reduced, opts) {
+	  			var checked = get(row, prop);
+	  			for (var i = 0; i < opts.values.length; i++) {
+	  				if (opts.values[i] === checked)
+	  					return false;
+	  			}
+	  			opts.values.push(checked);
+	  			return reduced;
+	  		}, {init: true, values: []});
+	  	}
+/*	  , Schema: function (schema) { // (missing dependencies)
 	  		if (typeof schema === 'undefined') { // implicitly use 1st object to test others
 	  			this.consistent = function (list) {
 	  				// check list for object consistency
@@ -117,7 +138,7 @@ run useful tests on your arrays or hashes*/
 	  		} else {
 
 	  		}
-	  	}
+	  	}*/
 	}
 
 	// (for equivalent use server-side or client-side)
@@ -125,8 +146,14 @@ run useful tests on your arrays or hashes*/
     	if (typeof module !== 'undefined' && module.exports) {
 			exports = module.exports = Tests;
 		}
-		// exports.Testeth = Tests; // ???
+		exports.test_over = Tests;
 	} else {
-		root['Testover'] = Tests;
+		root['test_over'] = Tests;
 	}
 }).call(this);
+
+/*todo:
+-pass an array of properties
+-enumerate over all properties
+-enumerate over an Nth position in an array
+-proper support for duck typing (probably another module entirely)*/
