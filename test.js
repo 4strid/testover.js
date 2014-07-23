@@ -1,6 +1,3 @@
-/*Don't look at this hideous mess. This is definitely not the test array I use because I am a
-Legit Programmer (TM)*/
-
 var Tests = require('./testover');
 var colors = require('colors');
 
@@ -53,23 +50,7 @@ var Args = {
  		{name: 'Joe', age: 20, sex: 'Male'}
  	 ,	{name: 'Josie', age: 20, sex: 'Female'}
  	 ,	{name: 'Johnny', age: 20, sex: 'Male'}
-	]
- ,	some_undefined_properties: [
- 		{name: 'Joe', age: 20}
- 	 ,	{name: 'Susie', age: 10}
- 	 ,	{name: 'Skeletor', age: null}
-	]
- ,	grab_bag: [
- 		{animal: 'dog', name:'Barkley', bark: 'woof!'}
- 	 ,	{animal: 'cat', name:'Wednesday', meow: 'mmmrr?'}
- 	 ,	{animal: 'person', name:'Genny', hello: 'Hello world'}
- 	]
- ,	associative_array_of_people: {
- 		first: {name: 'Joe', age: 20, sex: 'Male'}
- 	 ,	second: {name: 'Sally', age: 18, sex: 'Female'}
- 	 ,	third: {name: 'Teddy R.', age: 155, sex: 'Male'}
- 	 ,	fourth: {name: 'Macklemore', age: 30, sex: 'Male'} 		
- 	}
+	]	
 }
 
 test(3, 'max', 'length', 'identical_arrays');
@@ -93,36 +74,6 @@ console.log(); //let's do some objects
 test(155, 'max','age','array_of_people');
 test(18, 'min', 'age','array_of_people');
 test(false, 'consistent', 'age', 'array_of_people');
-
-// these tests should work the same for associative array of people
-
-test(155, 'max','age','associative_array_of_people');
-test(18, 'min', 'age','associative_array_of_people');
-test(false, 'consistent', 'age', 'associative_array_of_people');
-
 console.log('testing Equals(20) over array_of_triplets')
 assert(true, Tests.equals('age', 20).over(Args.array_of_triplets));
 test(true, 'consistent', 'sex', 'array_of_girls');
-test(true, 'unique', 'name', 'array_of_people');
-test(false, 'unique', 'length', 'identical_arrays');
-
-test(true, 'exists', 'age', 'some_undefined_properties');
-test(false, 'assigned', 'age', 'some_undefined_properties');
-
-test(false, 'exists', 'hello', 'grab_bag');
-test(true, 'exists', 'animal', 'grab_bag');
-test(false, 'assigned', 'bark', 'grab_bag');
-
-// phew, opts works for message passing x__x
-Tests.add('noConsecutiveRepeats', function(prop, row, reduced, opts) {
-	var current = row[prop];
-	if (current === opts.previous) {
-		return false
-	} else {
-		opts.previous = current;
-		return reduced;
-	}
-}, {init: true, previous: null});
-
-test(true, 'noConsecutiveRepeats', 'name', 'array_of_people');
-test(true, 'noConsecutiveRepeats', 'length', 'arrays_no_particular_order');
