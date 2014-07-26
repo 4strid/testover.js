@@ -1,9 +1,16 @@
 
-Test-Over
-========
+Test-Over (DEPRECATED)
+======================
 
 run useful tests on your arrays or hashes of arrays or hashes
 
+*Development of test-over, makes, and takes has been cancelled;
+it turns out I've just been writing underscore.js
+
+If the kinds of things test-over can do seem like something you'd
+be interested in, I highly encourage you to check out underscore.
+
+Ciao!*
 
 ```js
 var test = require('testover');
