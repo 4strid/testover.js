@@ -1,4 +1,4 @@
-/*test-over 0.2.0
+/*test-over 0.2.2
 run useful tests on your arrays or hashes*/
 
 (function () {
@@ -12,9 +12,9 @@ run useful tests on your arrays or hashes*/
 	var root = this;
 
 	/* by shifting property reading up into 'get()', we can use the same
-	functions for arrays of Arrays and arrays of Objects, nice!*/
+	functions for lists of Objects, Arrays, and Strings, nice!*/
 	function get (target, prop) {
-		if (Array.isArray(target) && prop === 'length') {
+		if (prop === 'length') {
 			return target.length;
 		} else
 			return target[prop];
