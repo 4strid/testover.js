@@ -70,7 +70,7 @@ test.add('noConsecutiveRepeats', function(prop, row, repeats, opts) {
 		opts.previous = current;
 		return repeats;
 	}
-}, {init: true, previous: null});
+}, {init: true, previous: undefined});
 
 test.noConsecutiveRepeats('property').over(array);
 ```

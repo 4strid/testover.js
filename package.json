@@ -1,17 +1,38 @@
 {
-    "name": "test-over"
-  , "description": "run useful tests on your arrays or hashes of arrays or hashes"
-  ,	"version": "0.2.2"
-  , "author": "Peter Fesz-Nguyen"
-  ,	"homepage": "https://github.com/ctrl-alt-meh/testover.js"
-  ,	"keywords": ["properties","arrays","hashes","consistency","checking","objects","existence","reduce"]
-  , "repository": {
-  		  "type": "git"
-  	  ,	"url": "http://github.com/ctrl-alt-meh/testover.js.git"
-  	}
-  ,	"main": "testover"
-  , "license": "MIT"
-  , "devDependenices": {
-      "colors": "0.6.2"
-    }
+  "name": "test-over",
+  "description": "run useful tests on your arrays or hashes of arrays or hashes",
+  "version": "0.2.3",
+  "author": {
+    "name": "Peter Fesz-Nguyen"
+  },
+  "homepage": "https://github.com/cutejs/testover.js",
+  "keywords": [
+    "properties",
+    "arrays",
+    "hashes",
+    "consistency",
+    "checking",
+    "objects",
+    "existence",
+    "reduce"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/cutejs/testover.js.git"
+  },
+  "main": "testover",
+  "license": "MIT",
+  "devDependenices": {
+    "colors": "0.6.2"
+  },
+  "readme": "\nTest-Over\n======================\n\nrun useful tests on your arrays or hashes of arrays or hashes\n\n```js\nvar test = require('testover');\n\ntest.max('length').over(someArray); //run your tests inline\n\nvar samelength = test.equals('length'); //or set up a testing function to call later\nsamelength(someArray);\n```\n## Iterate over whatever property\n\n```js\ntriplets: [\n    {name: 'Joe', age: 20}\n ,  {name: 'Josie', age: 20}\n ,  {name: 'Johnny', age: 20}\n]\n\ntest.consistent('age').over(triplets);\ntest.equals('age', 20).over(triplets);\n```\n## and over associative arrays\n\n```js\nassoc_triplets: {\n    first: {name: 'Joe', age: 20}\n ,  second: {name: 'Josie', age: 20}\n ,  third: {name: 'Johnny', age: 20}\n}\n\ntest.consistent('age').over(assoc_triplets);\ntest.equals('age', 20).over(assoc_triplets);\n```\n## Included tests\n\n- **max**: biggest numerical value\n- **min**: smallest numerical value\n- **equals**: if all values equal a specified value\n- **consistent**: if all values equal an unspecified value\n- **exists**: if a property exists (but might be null)\n- **assigned**: if a property *actually* exists\n- **unique**: if all values are unique\n\n## Add your own tests\nThe underlying process is essentially a fancy *reduce* function. With this in mind you can add your own reductions to do **even more testing**.\n\n#### Usage\ntests.add(* *<*field name>*, * *<*reduction function>*, * *<*options object>*)\n\n#### Reduction functions\nReductions take the form `r(property, row, reduced, opts)` where\n`property` is the property passed to the new test\n`row` is the object or array currently being tested\n`reduced` is the variable being reduced (the variable that will be returned)\n`opts` is an object with extra goodies you can pass between iterations of your reduction\n\nYou can assign an initial value by assigning `opts.init` when you add the new reduction, otherwise `opts.init` and `opts.first` are assigned to the first list item's value.\n#### Example\n```js\ntest.add('noConsecutiveRepeats', function(prop, row, repeats, opts) {\n\tvar current = row[prop];\n\tif (current === opts.previous) {\n\t\treturn false\n\t} else {\n\t\topts.previous = current;\n\t\treturn repeats;\n\t}\n}, {init: true, previous: null});\n\ntest.noConsecutiveRepeats('property').over(array);\n```\n\n## License\nMIT",
+  "readmeFilename": "README.md",
+  "gitHead": "f4d4ca9093b32ac4ee0dbaab9373f382cefe6a8f",
+  "bugs": {
+    "url": "https://github.com/cutejs/testover.js/issues"
+  },
+  "_id": "test-over@0.2.2",
+  "scripts": {},
+  "_shasum": "74283f47a569ce26f388ed9778f360e9f34cc2cd",
+  "_from": "test-over@>=0.2.0-0 <0.3.0-0"
 }

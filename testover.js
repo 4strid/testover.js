@@ -1,4 +1,4 @@
-/*test-over 0.2.2
+/*test-over
 run useful tests on your arrays or hashes*/
 
 (function () {
